@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vercel 덧셈 계산기</title>
+  </head>
+  <body>
+    <h2>Vercel 덧셈 계산기</h2>
+    <input type="number" id="n1" /> + <input type="number" id="n2" />
+    <button onclick="calculate()">더하기</button>
+    <p>결과: <span id="result">0</span></p>
+
+    <script>
+      async function calculate() {
+        const num1 = document.getElementById("n1").value;
+        const num2 = document.getElementById("n2").value;
+
+        const response = await fetch("/api/add", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            num1: parseFloat(num1),
+            num2: parseFloat(num2),
+          }),
+        });
+
+        if (!response.ok) {
+          document.getElementById("result").innerText = "에러";
+          return;
+        }
+
+        const data = await response.json();
+        document.getElementById("result").innerText = data.result;
+      }
+    </script>
+  </body>
+</html>
