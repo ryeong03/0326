@@ -1,4 +1,1 @@
-fastapi
-pydantic
-mangum
-uvicorn
+flask

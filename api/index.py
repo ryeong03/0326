@@ -1,28 +1,16 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
+from flask import Flask, jsonify, request
 
-try:
-    from mangum import Mangum
-except Exception:  # pragma: no cover
-    Mangum = None
-
-
-app = FastAPI()
-
-
-class Numbers(BaseModel):
-    num1: float
-    num2: float
+app = Flask(__name__)
 
 
 @app.get("/api/hello")
-async def hello():
-    return {"message": "Hello from FastAPI!"}
+def hello():
+    return jsonify(message="Hello from Flask!")
 
 
 @app.post("/api/add")
-async def add_numbers(data: Numbers):
-    return {"result": data.num1 + data.num2}
-
-
-handler = Mangum(app) if Mangum else app
+def add_numbers():
+    data = request.get_json(silent=True) or {}
+    num1 = float(data.get("num1", 0))
+    num2 = float(data.get("num2", 0))
+    return jsonify(result=num1 + num2)
