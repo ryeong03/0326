@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vercel 덧셈 계산기</title>
+    <title>올톨로지 덧셈 계산기</title>
     <style>
       :root {
         --bg: #f6faf7;
@@ -53,7 +53,7 @@
 
       .header {
         display: flex;
-        align-items: flex-end;
+        align-items: center;
         justify-content: space-between;
         gap: 16px;
         margin-bottom: 14px;
@@ -76,7 +76,7 @@
       }
 
       h1 {
-        font-size: 28px;
+        font-size: 30px;
         line-height: 1.15;
         margin: 0;
         letter-spacing: -0.02em;
@@ -118,7 +118,7 @@
       }
 
       .card-inner {
-        padding: 18px;
+        padding: 22px;
       }
 
       .row {
@@ -190,7 +190,7 @@
         appearance: none;
         border: 0;
         border-radius: 12px;
-        padding: 11px 14px;
+        padding: 12px 16px;
         font-weight: 700;
         font-size: 14px;
         cursor: pointer;
@@ -213,6 +213,10 @@
         color: var(--text);
       }
 
+      .ghost:hover {
+        background: rgba(0, 107, 79, 0.06);
+      }
+
       .result {
         margin-top: 14px;
         display: grid;
@@ -224,7 +228,7 @@
 
       .result-line {
         display: flex;
-        align-items: baseline;
+        align-items: center;
         justify-content: space-between;
         gap: 12px;
       }
@@ -235,9 +239,22 @@
       }
 
       .result-value {
-        font-size: 24px;
+        font-size: 28px;
         font-weight: 800;
         letter-spacing: -0.02em;
+      }
+
+      .equation {
+        margin-top: 6px;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        color: rgba(10, 18, 32, 0.54);
+        font-size: 13px;
+      }
+
+      .equation strong {
+        color: rgba(10, 18, 32, 0.84);
       }
 
       .msg {
@@ -274,8 +291,8 @@
         <div class="brand">
           <img class="logo" src="/assets/teamimage.PNG" alt="TEAM ALLTOLOGY" />
           <div>
-            <h1>Vercel 덧셈 계산기</h1>
-            <p class="subtitle">FE에서 숫자 2개 입력 → BE로 전송 → 결과 반환</p>
+            <h1>올톨로지 덧셈 계산기</h1>
+            <p class="subtitle">이화여자대학교 캡스톤디자인프로젝트 · 스타트 03팀 올톨로지</p>
           </div>
         </div>
         <div class="badge" id="statusBadge" title="백엔드 연결 상태">
@@ -312,6 +329,10 @@
               <div class="result-label">결과</div>
               <div class="result-value" id="result">0</div>
             </div>
+            <div class="equation" id="equation" aria-hidden="true">
+              <span><strong id="eqA">-</strong> + <strong id="eqB">-</strong></span>
+              <span>= <strong id="eqR">0</strong></span>
+            </div>
             <div class="msg" id="msg"></div>
           </div>
         </div>
@@ -331,6 +352,9 @@
       const btnCalc = $("btnCalc");
       const statusText = $("statusText");
       const statusDot = $("statusDot");
+      const eqA = $("eqA");
+      const eqB = $("eqB");
+      const eqR = $("eqR");
 
       function setMessage(text, type = "info") {
         msgEl.className = "msg" + (type === "error" ? " error" : "");
@@ -339,6 +363,7 @@
 
       function setResult(value) {
         resultEl.textContent = String(value);
+        eqR.textContent = String(value);
       }
 
       function setLoading(isLoading) {
@@ -361,6 +386,8 @@
           return;
         }
 
+        eqA.textContent = String(num1);
+        eqB.textContent = String(num2);
         setLoading(true);
 
         let response;
