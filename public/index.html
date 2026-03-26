@@ -296,18 +296,6 @@
         letter-spacing: -0.02em;
       }
 
-      .equation {
-        margin-top: 6px;
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        color: rgba(10, 18, 32, 0.54);
-        font-size: 13px;
-      }
-
-      .equation strong {
-        color: rgba(10, 18, 32, 0.84);
-      }
 
       .msg {
         font-size: 13px;
@@ -396,10 +384,6 @@
               <div class="result-label">결과</div>
               <div class="result-value" id="result">0</div>
             </div>
-            <div class="equation" id="equation" aria-hidden="true">
-              <span><strong id="eqA">-</strong> + <strong id="eqB">-</strong></span>
-              <span>= <strong id="eqR">0</strong></span>
-            </div>
             <div class="msg" id="msg"></div>
           </div>
         </div>
@@ -419,9 +403,6 @@
       const btnCalc = $("btnCalc");
       const statusText = $("statusText");
       const statusDot = $("statusDot");
-      const eqA = $("eqA");
-      const eqB = $("eqB");
-      const eqR = $("eqR");
 
       function setMessage(text, type = "info") {
         msgEl.className = "msg" + (type === "error" ? " error" : "");
@@ -430,7 +411,6 @@
 
       function setResult(value) {
         resultEl.textContent = String(value);
-        eqR.textContent = String(value);
       }
 
       function setLoading(isLoading) {
@@ -453,8 +433,6 @@
           return;
         }
 
-        eqA.textContent = String(num1);
-        eqB.textContent = String(num2);
         setLoading(true);
 
         let response;
