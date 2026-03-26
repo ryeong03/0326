@@ -39,6 +39,18 @@
         width: min(760px, 100%);
       }
 
+      .banner {
+        width: 100%;
+        height: clamp(140px, 22vw, 220px);
+        object-fit: cover;
+        border-radius: var(--radius);
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow);
+        margin-bottom: 14px;
+        background: #fff;
+        display: block;
+      }
+
       .header {
         display: flex;
         align-items: flex-end;
@@ -257,6 +269,7 @@
   </head>
   <body>
     <main class="wrap">
+      <img class="banner" src="/assets/top.png" alt="TEAM ALLTOLOGY 배너" />
       <div class="header">
         <div class="brand">
           <img class="logo" src="/assets/teamimage.PNG" alt="TEAM ALLTOLOGY" />
