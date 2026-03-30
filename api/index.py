@@ -67,10 +67,9 @@ async def get_raw_log(limit: int = 50):
                 "error": None,
             }
         )
-    return Response(
-        content=json.dumps(out, ensure_ascii=False, indent=2),
-        media_type="application/json; charset=utf-8",
-    )
+    # JSON Lines (NDJSON): one JSON object per line
+    content = "\n".join(json.dumps(item, ensure_ascii=False) for item in out) + ("\n" if out else "")
+    return Response(content=content, media_type="application/x-ndjson; charset=utf-8")
 
 
 @app.get("/log")
