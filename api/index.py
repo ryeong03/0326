@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi import Request
 from pydantic import BaseModel
+from starlette.responses import Response
+import json
 
 app = FastAPI()
 
@@ -65,7 +67,10 @@ async def get_raw_log(limit: int = 50):
                 "error": None,
             }
         )
-    return out
+    return Response(
+        content=json.dumps(out, ensure_ascii=False, indent=2),
+        media_type="application/json; charset=utf-8",
+    )
 
 
 @app.get("/log")
