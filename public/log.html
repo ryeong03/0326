@@ -79,6 +79,22 @@
         justify-content: flex-end;
       }
 
+      .pager-inline {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: 4px;
+        padding-left: 8px;
+        border-left: 1px solid var(--line);
+      }
+
+      .page-info {
+        font-size: 12px;
+        color: var(--muted);
+        min-width: 92px;
+        text-align: center;
+      }
+
       button,
       a.btn {
         appearance: none;
@@ -100,6 +116,11 @@
       button:hover,
       a.btn:hover {
         filter: brightness(0.97);
+      }
+
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
       }
 
       .ghost {
@@ -158,20 +179,6 @@
         color: var(--muted);
       }
 
-      .pager {
-        margin-top: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        border-top: 1px solid var(--line);
-        padding-top: 14px;
-      }
-
-      .page-info {
-        font-size: 12px;
-        color: var(--muted);
-      }
     </style>
   </head>
   <body>
@@ -186,19 +193,17 @@
             <div class="actions">
               <a class="btn ghost" href="/">계산기로</a>
               <button class="ghost" type="button" onclick="refreshLogs()">새로고침</button>
+              <span class="pager-inline" aria-label="pagination">
+                <button class="ghost" id="btnPrev" type="button" onclick="prevPage()">이전</button>
+                <div class="page-info" id="pageInfo">페이지 1 (5개씩)</div>
+                <button class="ghost" id="btnNext" type="button" onclick="nextPage()">다음</button>
+              </span>
             </div>
           </div>
 
           <div class="status" id="status">불러오는 중…</div>
           <ul class="logs-list" id="logsList"></ul>
           <div class="empty" id="empty" style="display: none">아직 로그가 없어요.</div>
-          <div class="pager" aria-label="pagination">
-            <div class="actions">
-              <button class="ghost" id="btnPrev" type="button" onclick="prevPage()">이전</button>
-              <button class="ghost" id="btnNext" type="button" onclick="nextPage()">다음</button>
-            </div>
-            <div class="page-info" id="pageInfo">페이지 1 (10개씩)</div>
-          </div>
         </div>
       </section>
     </main>
@@ -212,12 +217,12 @@
       const btnNext = $("btnNext");
       const pageInfo = $("pageInfo");
 
-      const PAGE_SIZE = 10;
+      const PAGE_SIZE = 5;
       let page = 1;
       let lastCount = 0;
 
       function setPageInfo() {
-        pageInfo.textContent = `페이지 ${page} (10개씩)`;
+        pageInfo.textContent = `페이지 ${page} (5개씩)`;
         btnPrev.disabled = page <= 1;
         btnNext.disabled = lastCount < PAGE_SIZE;
       }
