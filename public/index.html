@@ -528,6 +528,8 @@
                 </div>
                 <div class="actions" style="margin: 0; padding: 0">
                   <button class="ghost" id="btnRefreshLogs" type="button" onclick="refreshLogs()">새로고침</button>
+                  <button class="ghost" id="btnPrevLogs" type="button" onclick="prevLogsPage()">이전</button>
+                  <button class="ghost" id="btnNextLogs" type="button" onclick="nextLogsPage()">다음</button>
                 </div>
               </div>
               <ul class="logs-list" id="logsList"></ul>
@@ -554,7 +556,13 @@
       const logsList = $("logsList");
       const logsEmpty = $("logsEmpty");
       const logsStatus = $("logsStatus");
+      const btnPrevLogs = $("btnPrevLogs");
+      const btnNextLogs = $("btnNextLogs");
       const logUrl = $("logUrl");
+
+      const LOG_PAGE_SIZE = 5;
+      let logsPage = 1;
+      let lastLogsCount = 0;
 
       function setMessage(text, type = "info") {
         msgEl.className = "msg" + (type === "error" ? " error" : "");
@@ -651,12 +659,16 @@
         if (!dbEnabled) {
           logsEmpty.style.display = "block";
           logsEmpty.textContent = "DB가 아직 설정되지 않아 로그를 저장/조회할 수 없어요.";
+          if (btnPrevLogs) btnPrevLogs.disabled = true;
+          if (btnNextLogs) btnNextLogs.disabled = true;
           return;
         }
 
         if (!logs || logs.length === 0) {
           logsEmpty.style.display = "block";
           logsEmpty.textContent = "아직 로그가 없어요.";
+          if (btnPrevLogs) btnPrevLogs.disabled = logsPage <= 1;
+          if (btnNextLogs) btnNextLogs.disabled = true;
           return;
         }
 
@@ -675,17 +687,39 @@
         }
       }
 
+      function setLogsPagerState() {
+        if (btnPrevLogs) btnPrevLogs.disabled = logsPage <= 1;
+        if (btnNextLogs) btnNextLogs.disabled = lastLogsCount < LOG_PAGE_SIZE;
+      }
+
       async function refreshLogs() {
         logsStatus.textContent = "불러오는 중…";
         try {
-          const res = await fetch("/api/logs?limit=10");
+          const offset = (logsPage - 1) * LOG_PAGE_SIZE;
+          const res = await fetch(`/api/logs?limit=${LOG_PAGE_SIZE}&offset=${offset}`);
           if (!res.ok) throw new Error("bad status");
           const data = await res.json();
-          logsStatus.textContent = data.db_enabled ? "DB 로그 표시 중" : "DB 미설정";
+          lastLogsCount = Array.isArray(data.logs) ? data.logs.length : 0;
+          logsStatus.textContent = data.db_enabled
+            ? `DB 로그 표시 중 · ${LOG_PAGE_SIZE}개씩 · ${logsPage}페이지`
+            : "DB 미설정";
           renderLogs(data.logs, data.db_enabled);
+          setLogsPagerState();
         } catch {
           logsStatus.textContent = "불러오기 실패";
         }
+      }
+
+      function prevLogsPage() {
+        if (logsPage <= 1) return;
+        logsPage -= 1;
+        refreshLogs();
+      }
+
+      function nextLogsPage() {
+        if (lastLogsCount < LOG_PAGE_SIZE) return;
+        logsPage += 1;
+        refreshLogs();
       }
 
       function bindEnterToCalculate(el) {
