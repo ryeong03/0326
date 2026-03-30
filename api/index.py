@@ -66,3 +66,8 @@ async def get_raw_log(limit: int = 50):
             }
         )
     return out
+
+
+@app.get("/log")
+async def get_raw_log_root(limit: int = 50):
+    return await get_raw_log(limit=limit)
