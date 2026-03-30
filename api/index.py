@@ -46,3 +46,23 @@ async def add_numbers(data: Numbers, request: Request):
 @app.get("/api/logs")
 async def get_logs(limit: int = 20):
     return {"db_enabled": db.is_enabled(), "logs": db.fetch_logs(limit=limit)}
+
+
+# For assignment: expose raw JSON logs at /log (via vercel route)
+@app.get("/api/log")
+async def get_raw_log(limit: int = 50):
+    rows = db.fetch_logs(limit=limit)
+    out = []
+    for r in rows:
+        out.append(
+            {
+                "id": r["id"],
+                "ts": r["created_at"],
+                "a": r["num1"],
+                "b": r["num2"],
+                "op": "add",
+                "result": r["result"],
+                "error": None,
+            }
+        )
+    return out

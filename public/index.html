@@ -248,6 +248,52 @@
         justify-content: center;
       }
 
+      /* Make <a> look like our buttons */
+      a.btn-link {
+        appearance: none;
+        border: 0;
+        border-radius: 12px;
+        padding: 11px 14px;
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      a.btn-link:hover {
+        filter: brightness(0.97);
+      }
+
+      a.btn-link.ghost {
+        background: #ffffff;
+        border: 1px solid var(--line);
+        color: var(--text);
+      }
+
+      a.btn-link.ghost:hover {
+        background: rgba(0, 107, 79, 0.06);
+      }
+
+      .url-line {
+        margin-top: 8px;
+        font-size: 12px;
+        color: var(--muted);
+        text-align: right;
+        padding-right: 12px;
+        word-break: break-all;
+      }
+
+      .url-line a {
+        color: #2563eb;
+        font-weight: 800;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
+      .url-line a:hover {
+        filter: brightness(0.95);
+      }
+
       button {
         appearance: none;
         border: 0;
@@ -451,9 +497,20 @@
           </div>
 
           <div class="actions">
-            <a class="btn-link ghost" href="/log" aria-label="계산 로그 페이지로 이동">로그 보기</a>
+            <a class="btn-link ghost" href="/log" aria-label="JSON 로그 보기">로그(JSON)</a>
             <button id="btnCalc" class="primary" type="button" onclick="calculate()">더하기</button>
             <button class="ghost" id="btnReset" type="button" onclick="resetAll()">초기화</button>
+          </div>
+          <div class="url-line">
+            로그 URL:
+            <a
+              id="logUrl"
+              href="/log"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="JSON 로그 URL 새 탭에서 열기"
+              >/log</a
+            >
           </div>
 
           <div class="result" aria-live="polite">
@@ -497,6 +554,7 @@
       const logsList = $("logsList");
       const logsEmpty = $("logsEmpty");
       const logsStatus = $("logsStatus");
+      const logUrl = $("logUrl");
 
       function setMessage(text, type = "info") {
         msgEl.className = "msg" + (type === "error" ? " error" : "");
@@ -640,6 +698,11 @@
       bindEnterToCalculate(n2);
       checkBackend();
       refreshLogs();
+      if (logUrl) {
+        const full = `${location.origin}/log`;
+        logUrl.textContent = full;
+        logUrl.href = full;
+      }
     </script>
   </body>
 </html>
