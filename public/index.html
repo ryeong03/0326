@@ -241,6 +241,13 @@
         padding-right: 12px;
       }
 
+      a.btn-link {
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
       button {
         appearance: none;
         border: 0;
@@ -444,6 +451,7 @@
           </div>
 
           <div class="actions">
+            <a class="btn-link ghost" href="/log" aria-label="계산 로그 페이지로 이동">로그 보기</a>
             <button id="btnCalc" class="primary" type="button" onclick="calculate()">더하기</button>
             <button class="ghost" id="btnReset" type="button" onclick="resetAll()">초기화</button>
           </div>
