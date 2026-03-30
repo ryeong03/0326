@@ -1,7 +1,12 @@
 from fastapi import FastAPI
+from fastapi import Request
 from pydantic import BaseModel
 
 app = FastAPI()
+
+from . import db
+
+db.ensure_schema()
 
 
 class Numbers(BaseModel):
@@ -11,9 +16,33 @@ class Numbers(BaseModel):
 
 @app.get("/api/hello")
 async def hello():
-    return {"message": "Hello from FastAPI!"}
+    return {"message": "Hello from FastAPI!", "db_enabled": db.is_enabled()}
 
 
 @app.post("/api/add")
-async def add_numbers(data: Numbers):
-    return {"result": data.num1 + data.num2}
+async def add_numbers(data: Numbers, request: Request):
+    result = data.num1 + data.num2
+
+    forwarded_for = request.headers.get("x-forwarded-for")
+    ip = (forwarded_for.split(",")[0].strip() if forwarded_for else None) or (
+        request.client.host if request.client else None
+    )
+    user_agent = request.headers.get("user-agent")
+
+    try:
+        db.insert_log(
+            num1=data.num1,
+            num2=data.num2,
+            result=result,
+            ip=ip,
+            user_agent=user_agent,
+        )
+    except Exception:
+        pass
+
+    return {"result": result, "db_enabled": db.is_enabled()}
+
+
+@app.get("/api/logs")
+async def get_logs(limit: int = 20):
+    return {"db_enabled": db.is_enabled(), "logs": db.fetch_logs(limit=limit)}
