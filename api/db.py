@@ -5,10 +5,21 @@ import psycopg
 
 
 def _database_url() -> Optional[str]:
-    url = os.getenv("DATABASE_URL")
-    if not url:
-        return None
-    return url
+    # Prefer explicit DATABASE_URL, but also support:
+    # - Vercel Postgres env vars (POSTGRES_URL*)
+    # - Supabase ↔ Vercel Integration env vars (DATABASE_POSTGRES_URL*)
+    candidates = [
+        os.getenv("DATABASE_URL"),
+        os.getenv("DATABASE_POSTGRES_URL_NON_POOLING"),
+        os.getenv("DATABASE_POSTGRES_URL"),
+        os.getenv("DATABASE_POSTGRES_PRISMA_URL"),
+        os.getenv("POSTGRES_URL_NON_POOLING"),
+        os.getenv("POSTGRES_URL"),
+    ]
+    for url in candidates:
+        if url:
+            return url
+    return None
 
 
 def is_enabled() -> bool:
