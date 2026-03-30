@@ -3,6 +3,7 @@
   "routes": [
     { "handle": "filesystem" },
     { "src": "/api/(.*)", "dest": "/api/index.py" },
+    { "src": "/logs", "dest": "/api/index.py" },
     { "src": "/log", "dest": "/api/index.py" },
     { "src": "/log-ui", "dest": "/log.html" },
     { "src": "/", "dest": "/index.html" },

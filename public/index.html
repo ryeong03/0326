@@ -497,7 +497,7 @@
           </div>
 
           <div class="actions">
-            <a class="btn-link ghost" href="/log" aria-label="JSON 로그 보기">로그(JSON)</a>
+            <a class="btn-link ghost" href="/logs" aria-label="JSON 로그 보기">로그(JSON)</a>
             <button id="btnCalc" class="primary" type="button" onclick="calculate()">더하기</button>
             <button class="ghost" id="btnReset" type="button" onclick="resetAll()">초기화</button>
           </div>
@@ -505,11 +505,11 @@
             로그 URL:
             <a
               id="logUrl"
-              href="/log"
+              href="/logs"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="JSON 로그 URL 새 탭에서 열기"
-              >/log</a
+              >/logs</a
             >
           </div>
 
@@ -699,7 +699,7 @@
       checkBackend();
       refreshLogs();
       if (logUrl) {
-        const full = `${location.origin}/log`;
+        const full = `${location.origin}/logs`;
         logUrl.textContent = full;
         logUrl.href = full;
       }

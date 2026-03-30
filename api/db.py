@@ -76,11 +76,12 @@ def insert_log(
             )
 
 
-def fetch_logs(*, limit: int = 20) -> List[Dict[str, Any]]:
+def fetch_logs(*, limit: int = 20, offset: int = 0) -> List[Dict[str, Any]]:
     if not is_enabled():
         return []
 
     limit = max(1, min(int(limit), 200))
+    offset = max(0, min(int(offset), 10_000))
 
     with _connect() as conn:
         with conn.cursor() as cur:
@@ -89,9 +90,9 @@ def fetch_logs(*, limit: int = 20) -> List[Dict[str, Any]]:
                 select id, num1, num2, result, ip, user_agent, created_at
                 from calc_logs
                 order by id desc
-                limit %s
+                limit %s offset %s
                 """,
-                (limit,),
+                (limit, offset),
             )
             rows: List[Tuple[Any, ...]] = cur.fetchall()
 

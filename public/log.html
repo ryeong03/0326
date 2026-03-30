@@ -157,6 +157,21 @@
         font-size: 13px;
         color: var(--muted);
       }
+
+      .pager {
+        margin-top: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        border-top: 1px solid var(--line);
+        padding-top: 14px;
+      }
+
+      .page-info {
+        font-size: 12px;
+        color: var(--muted);
+      }
     </style>
   </head>
   <body>
@@ -166,7 +181,7 @@
           <div class="topbar">
             <div>
               <h1>계산 로그 (UI)</h1>
-              <div class="sub">UI 보기: `/log-ui` · JSON 보기: `/log`</div>
+              <div class="sub">UI 보기: `/log-ui` · JSON 보기: `/logs`</div>
             </div>
             <div class="actions">
               <a class="btn ghost" href="/">계산기로</a>
@@ -177,6 +192,13 @@
           <div class="status" id="status">불러오는 중…</div>
           <ul class="logs-list" id="logsList"></ul>
           <div class="empty" id="empty" style="display: none">아직 로그가 없어요.</div>
+          <div class="pager" aria-label="pagination">
+            <div class="actions">
+              <button class="ghost" id="btnPrev" type="button" onclick="prevPage()">이전</button>
+              <button class="ghost" id="btnNext" type="button" onclick="nextPage()">다음</button>
+            </div>
+            <div class="page-info" id="pageInfo">페이지 1 (10개씩)</div>
+          </div>
         </div>
       </section>
     </main>
@@ -186,6 +208,19 @@
       const statusEl = $("status");
       const logsList = $("logsList");
       const emptyEl = $("empty");
+      const btnPrev = $("btnPrev");
+      const btnNext = $("btnNext");
+      const pageInfo = $("pageInfo");
+
+      const PAGE_SIZE = 10;
+      let page = 1;
+      let lastCount = 0;
+
+      function setPageInfo() {
+        pageInfo.textContent = `페이지 ${page} (10개씩)`;
+        btnPrev.disabled = page <= 1;
+        btnNext.disabled = lastCount < PAGE_SIZE;
+      }
 
       function formatWhen(iso) {
         try {
@@ -230,17 +265,33 @@
         statusEl.className = "status";
         statusEl.textContent = "불러오는 중…";
         try {
-          const res = await fetch("/api/logs?limit=50");
+          const offset = (page - 1) * PAGE_SIZE;
+          const res = await fetch(`/api/logs?limit=${PAGE_SIZE}&offset=${offset}`);
           if (!res.ok) throw new Error("bad status");
           const data = await res.json();
           statusEl.textContent = data.db_enabled ? "DB 로그 표시 중" : "DB 미설정";
+          lastCount = Array.isArray(data.logs) ? data.logs.length : 0;
           renderLogs(data.logs, data.db_enabled);
+          setPageInfo();
         } catch {
           statusEl.className = "status error";
           statusEl.textContent = "불러오기 실패 (백엔드/DB 상태를 확인해 주세요)";
         }
       }
 
+      function prevPage() {
+        if (page <= 1) return;
+        page -= 1;
+        refreshLogs();
+      }
+
+      function nextPage() {
+        if (lastCount < PAGE_SIZE) return;
+        page += 1;
+        refreshLogs();
+      }
+
+      setPageInfo();
       refreshLogs();
     </script>
   </body>

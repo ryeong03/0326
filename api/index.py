@@ -46,14 +46,17 @@ async def add_numbers(data: Numbers, request: Request):
 
 
 @app.get("/api/logs")
-async def get_logs(limit: int = 20):
-    return {"db_enabled": db.is_enabled(), "logs": db.fetch_logs(limit=limit)}
+async def get_logs(limit: int = 20, offset: int = 0):
+    return {
+        "db_enabled": db.is_enabled(),
+        "logs": db.fetch_logs(limit=limit, offset=offset),
+    }
 
 
 # For assignment: expose raw JSON logs at /log (via vercel route)
 @app.get("/api/log")
-async def get_raw_log(limit: int = 50):
-    rows = db.fetch_logs(limit=limit)
+async def get_raw_log(limit: int = 50, offset: int = 0):
+    rows = db.fetch_logs(limit=limit, offset=offset)
     out = []
     for r in rows:
         out.append(
@@ -77,6 +80,12 @@ async def get_raw_log(limit: int = 50):
     )
 
 
+@app.get("/logs")
+async def get_raw_logs_root(limit: int = 50, offset: int = 0):
+    return await get_raw_log(limit=limit, offset=offset)
+
+
 @app.get("/log")
-async def get_raw_log_root(limit: int = 50):
-    return await get_raw_log(limit=limit)
+async def legacy_log_redirect(limit: int = 50, offset: int = 0):
+    # Backward compatibility: keep /log working
+    return await get_raw_log(limit=limit, offset=offset)
