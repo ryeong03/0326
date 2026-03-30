@@ -69,7 +69,12 @@ async def get_raw_log(limit: int = 50):
         )
     # JSON Lines (NDJSON): one JSON object per line
     content = "\n".join(json.dumps(item, ensure_ascii=False) for item in out) + ("\n" if out else "")
-    return Response(content=content, media_type="application/x-ndjson; charset=utf-8")
+    # Use text/plain so browsers render instead of downloading.
+    return Response(
+        content=content,
+        media_type="text/plain; charset=utf-8",
+        headers={"Content-Disposition": "inline"},
+    )
 
 
 @app.get("/log")
