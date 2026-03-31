@@ -505,11 +505,11 @@
             로그 URL:
             <a
               id="logUrl"
-              href="/logs"
+              href="/api/logs"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="JSON 로그 URL 새 탭에서 열기"
-              >/logs</a
+              >/api/logs</a
             >
           </div>
 
@@ -733,7 +733,7 @@
       checkBackend();
       refreshLogs();
       if (logUrl) {
-        const full = `${location.origin}/logs`;
+        const full = `${location.origin}/api/logs`;
         logUrl.textContent = full;
         logUrl.href = full;
       }
